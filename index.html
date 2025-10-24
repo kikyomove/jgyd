@@ -59,23 +59,47 @@ body {
 /* 2. 让 #phone-screen 成为新的“根”容器，撑满整个浏览器窗口 */
 /* ▼▼▼ 请用这块【最终修正版】的代码，替换掉你现有的 #phone-screen 样式 ▼▼▼ */
 #phone-screen {
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    padding-bottom: env(safe-area-inset-bottom); /* 底部预留安全区高度 */
-    box-sizing: border-box; /* 确保padding不撑大容器 */
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    width: 100vw;
+  height: 100vh; /* 基础高度 */
+  /* 关键：固定定位+禁止溢出滚动，确保屏幕不滑动 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  /* 适配底部安全区，消除空白（关键修复） */
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: border-box; /* 确保padding不增加容器高度 */
     background-color: #ffffff; /* ★ 修改这里为白色 */
 }
 /* ▲▲▲ 替换结束 ▲▲▲ */
-/* 主屏幕模式（PWA）下的特殊适配 */
-@media (display-mode: standalone) {
-  .phone {
-    height: 100vh !important; /* 主屏幕模式下强制使用视口高度 */
-    padding-bottom: env(safe-area-inset-bottom);
+//* 浏览器模式下用动态高度，避免工具栏影响 */
+@media not all and (display-mode: standalone) {
+  .phone-screen {
+    height: 100dvh;
   }
+}
+
+/* 主屏幕（PWA）模式强制全屏 */
+@media (display-mode: standalone) {
+  .phone-screen {
+    /* 覆盖可能的冲突样式，确保固定和全屏 */
+    height: 100vh !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+}
+
+/* 保留其他核心固定样式（必须保留） */
+html {
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+body {
+  touch-action: manipulation; /* 禁止滑动手势 */
+  margin: 0; /* 清除默认边距 */
+  overflow: hidden;
 }
 /* 3. 【核心】隐藏掉模拟器的状态栏 */
 #status-bar {
